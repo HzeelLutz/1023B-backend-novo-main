@@ -47,6 +47,34 @@ app.get("/", async (req, res) => {
     }
 })
 
+app.get("/produtos", async (req, res) => {
+    try {
+        const conn = await mysql.createConnection({
+            host: process.env.DBHOST!,
+            user: process.env.DBUSER!,
+            password: process.env.DBPASSWORD!,
+            database: process.env.DBDATABASE!,
+            port: Number(process.env.DBPORT!)
+            // o '!' é pro valor ser sempre uma sring apesar de do tipo "string|underfined"
+        })
+
+        
+        const [rows] = await conn.execute('SELECT id, nome, preco, urlfoto, descricao FROM produtos')
+        res.json(rows)
+
+        // Fechar a conexão
+        // await conn.end()
+    } catch (err) {
+        if (err instanceof Error) {
+            console.error('Erro ao buscar produtos:', err)
+            res.status(500).json({ error: 'Erro ao conectar ou buscar dados do banco de dados: ' + err.message })
+        } else {
+            console.error('Erro desconhecido:', err)
+            res.status(500).json({ error: 'Erro desconhecido ao buscar produtos.' })
+        }
+    }
+}) 
+
 app.listen(8000, () => {
     console.log("Server is running on port: 8000")
 })
