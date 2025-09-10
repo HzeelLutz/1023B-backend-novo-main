@@ -63,7 +63,7 @@ app.get("/produtos", async (req, res) => {
         res.json(rows)
 
         // Fechar a conexão
-        // await conn.end()
+        await conn.end()
     } catch (err) {
         if (err instanceof Error) {
             console.error('Erro ao buscar produtos:', err)
